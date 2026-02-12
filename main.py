@@ -74,12 +74,12 @@ def consumer() -> None:
     for _ in range(SIZE * 2): #we just consume twice the buffer size for testing
         #write the code below to correctly remove an item from the circular buffer
         
-        full.acquire()
+        full.acquire()      #DECREMENT the FULL semaphore to indicate that we a are moving an item from buffer
                             #CHECK THIS
-        with mutex:
+        with mutex:          #use mutex lock, and remove item from buffer
             item = buffer.remove()
 
-        empty.release()
+        empty.release()     #INCREMENT the EMPTY semaphore, indicating that there is another empty slot    
 
         #end of your implementation for this function
         #use the following code as is
@@ -96,4 +96,12 @@ if __name__ == "__main__":
                                           #initial value set to SIZE
     mutex = threading.Lock()  #lock for protecting data on insertion or removal
 
-    #complete the producer-consumer thread creation below
+    #complete the producer-consumer thread creation below   
+    prod = threading.Thread(target=producer) #create producer thread
+    cons = threading.Thread(target=consumer) #create consumer thread
+
+    prod.start() #start producer thread
+    cons.start() #start consumer thread
+
+    prod.join() #join , halt main thread
+    cons.join() #join , half main thread
